@@ -1,0 +1,24 @@
+# Recode GWAS summary into METAL input format for further analyses
+
+for i in {1.22}
+do
+python GWAS_summary_to_METAL.py AFR_fixed_uniq_NG_chr$i   |sed '1iSNP\tBETA\tP\tSE\tTEST\tOTHER\tTEST_FREQ\tN\tN_CASE'  > METAL_input_rep_AFR_bd38_1pct_chr$i
+python GWAS_summary_to_METAL.py AFR_ER_pos_uniq_NG_chr$i  |sed '1iSNP\tBETA\tP\tSE\tTEST\tOTHER\tTEST_FREQ\tN\tN_CASE'  > METAL_input_rep_AFR_ERpos_bd38_1pct_chr$i
+python GWAS_summary_to_METAL.py AFR_ER_neg_uniq_NG_chr$i  |sed '1iSNP\tBETA\tP\tSE\tTEST\tOTHER\tTEST_FREQ\tN\tN_CASE'  > METAL_input_rep_AFR_ERneg_bd38_1pct_chr$i
+python GWAS_summary_to_METAL.py AFR_TNBC_uniq_NG_chr$i    |sed '1iSNP\tBETA\tP\tSE\tTEST\tOTHER\tTEST_FREQ\tN\tN_CASE'  > METAL_input_rep_AFR_TNBC_bd38_1pct_chr$i
+
+done
+
+##### GWAS_summary_to_METAL.py ##########
+import sys
+for line in open(sys.argv[1]):
+    if line.startswith("SNP"):continue
+    if 'NA' in line : continue
+    snp,test_a,other_a,test_freq,FreqSE,MinFreq,MaxFreq,Effect,StdErr,Pval,Direction,I2,Chisqm,df,HetP,N,N_CASE= line.strip().split("\t")
+    c,pos,a1,a2  = snp.split(":")
+    snp1 = ':'.join([c,pos,test_a,other_a])
+    snp2 = ':'.join([c,pos,other_a,test_a])
+    print("\t".join([snp1.upper(),Effect,Pval,StdErr,test_a.upper(),other_a.upper(),test_freq,N,N_CASE]))
+    print("\t".join([snp2.upper(),Effect,Pval,StdErr,test_a.upper(),other_a.upper(),test_freq,N,N_CASE]))
+
+########################################
