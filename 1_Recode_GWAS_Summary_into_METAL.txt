@@ -1,3 +1,10 @@
+# GWAS summary shared:
+AFR_fixed_uniq_NG_chr$i
+AFR_ER_pos_uniq_NG_chr$i
+AFR_ER_neg_uniq_NG_chr$i
+AFR_TNBC_uniq_NG_chr$i
+
+
 # Recode GWAS summary into METAL input format for further analyses
 
 for i in {1.22}
