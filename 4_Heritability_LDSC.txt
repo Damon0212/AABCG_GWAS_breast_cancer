@@ -1,0 +1,83 @@
+### (4) Heritability and Genetic Correlation using LD-score regression
+
+# Keep SNP from the GWAS summary
+for i in {1..22}
+do
+sed 1d METAL_input_rep_AFR_bd38_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_AFR_bd38_1pct
+sed 1d METAL_input_rep_EUR_bd38_liftover_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_EUR_bd38_1pct
+
+sed 1d METAL_input_rep_AFR_ERpos_bd38_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_AFR_bd38_1pct_ERpos
+sed 1d METAL_input_rep_EUR_ERpos_bd38_liftover_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_EUR_bd38_1pct_ERpos
+
+sed 1d METAL_input_rep_AFR_ERneg_bd38_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_AFR_bd38_1pct_ERneg
+sed 1d METAL_input_rep_EUR_ERneg_bd38_liftover_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_EUR_bd38_1pct_ERneg
+
+sed 1d METAL_input_rep_AFR_TNBC_bd38_1pct_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_AFR_bd38_1pct_TNBC
+sed 1d METAL_input_rep_EUR_TNBC_bd38_liftover_chr$i |awk 'BEGIN { OFS = "\t";} {if(($5=="A"||$5=="T"||$5=="C"||$5=="G") && ($6=="A"||$6=="T"||$6=="C"||$6=="G")) print $0}' >> METAL_input_rep_EUR_bd38_1pct_TNBC
+
+done
+
+conda activate ldsc
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_AFR_bd38_1pct --out AFR_summary_rep
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_EUR_bd38_1pct --out EUR_summary_rep
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_AFR_bd38_1pct_ERpos --out AFR_summary_rep_ERpos
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_EUR_bd38_1pct_ERpos --out EUR_summary_rep_ERpos
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_AFR_bd38_1pct_ERneg --out AFR_summary_rep_ERneg
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_EUR_bd38_1pct_ERneg --out EUR_summary_rep_ERneg
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_AFR_bd38_1pct_TNBC --out AFR_summary_rep_TNBC
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/munge_sumstats.py --sumstats METAL_input_rep_EUR_bd38_1pct_TNBC --out EUR_summary_rep_TNBC
+
+# Estimate LD score (the reference LD datasets need to be mapped with --cm-map command in PLINK)
+for i in {1..22}
+do
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py --bfile AFR_bd38_map_chr$i --l2 --ld-wind-cm 1 --out AFR_bd38_LDSC_chr$i
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py --bfile EUR_bd38_map_chr$i --l2 --ld-wind-cm 1 --out EUR_bd38_LDSC_chr$i
+done
+
+
+#### estimating heritability and genetic correlation within each race
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py \
+--h2 AFR_summary_rep.sumstats.gz \
+--ref-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/AFR_bd38_LDSC_chr/ \
+--w-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/AFR_bd38_LDSC_chr/ \
+--out AFR_h2
+
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py \
+--h2 AFR_summary_rep.sumstats.gz \
+--ref-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/AFR_bd38_LDSC_chr/ \
+--w-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/AFR_bd38_LDSC_chr/ \
+--out AFR_h2_liability \
+--samp-prev 0.449 \
+--pop-prev 0.01451
+
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py \
+--rg AFR_summary_rep_ERpos.sumstats.gz,AFR_summary_rep_ERneg.sumstats.gz \
+--ref-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/AFR_bd38_LDSC_chr/ \
+--w-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/AFR_bd38_LDSC_chr/ \
+--out AFR_ERpos_ERneg
+
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py \
+--h2 EUR_summary_rep.sumstats.gz \
+--ref-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/EUR_bd38_LDSC_chr/ \
+--w-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/EUR_bd38_LDSC_chr/ \
+--out EUR_h2
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py \
+--h2 EUR_summary_rep.sumstats.gz \
+--ref-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/EUR_bd38_LDSC_chr/ \
+--w-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/EUR_bd38_LDSC_chr/ \
+--out EUR_h2_liability \
+--samp-prev 0.540 \
+--pop-prev 0.02451
+
+python /gpfs52/nobackup/sbcs/damon/LDSC/ldsc/ldsc.py \
+--rg EUR_summary_rep_ERpos.sumstats.gz,EUR_summary_rep_ERneg.sumstats.gz \
+--ref-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/EUR_bd38_LDSC_chr/ \
+--w-ld-chr /gpfs52/nobackup/sbcs/damon/AABCGS/GWAS_Topmed/GWAS_NG/LD_score_regression/EUR_bd38_LDSC_chr/ \
+--out EUR_ERpos_ERneg

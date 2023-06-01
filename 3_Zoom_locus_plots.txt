@@ -1,0 +1,55 @@
+### (3) Zoom locus plots
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr2   |awk 'BEGIN { OFS = "\t"} {if($3 >= 120001624 && $3 <= 121001624) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr2_120501624
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr4   |awk 'BEGIN { OFS = "\t"} {if($3 >= 105113442 && $3 <= 106113442) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr4_105613442
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr5   |awk 'BEGIN { OFS = "\t"} {if($3 >= 779675 && $3 <= 1779675) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr5_1279675
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr6   |awk 'BEGIN { OFS = "\t"} {if($3 >= 151229388 && $3 <= 152229388) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr6_151729388
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr10   |awk 'BEGIN { OFS = "\t"} {if($3 >= 121078300 && $3 <= 122078300) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr10_121578300
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr16   |awk 'BEGIN { OFS = "\t"} {if($3 >= 52065276 && $3 <= 53065276) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr16_52565276
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr18   |awk 'BEGIN { OFS = "\t"} {if($3 >= 31850613 && $3 <= 32850613) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr18_32350613
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr19   |awk 'BEGIN { OFS = "\t"} {if($3 >= 16783116 && $3 <= 17783116) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr19_17283116
+python Add_pos.py METAL_input_rep_AFR_ERpos_bd38_1pct_chr2   |awk 'BEGIN { OFS = "\t"} {if($3 >= 216539053 && $3 <= 217539053) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr2_217039053
+python Add_pos.py METAL_input_rep_AFR_ERpos_bd38_1pct_chr14  |awk 'BEGIN { OFS = "\t"} {if($3 >=  36182738 && $3 <=  37182738) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > AFR_rep_SNP_P_chr14_36682738
+
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($3 >= 120001624 && $3 <= 121001624) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr2_120501624
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr4 |awk 'BEGIN { OFS = "\t"} {if($3 >= 105113442 && $3 <= 106113442) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr4_105613442
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr5 |awk 'BEGIN { OFS = "\t"} {if($3 >= 779675 && $3 <= 1779675) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr5_1279675
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr6 |awk 'BEGIN { OFS = "\t"} {if($3 >= 151229388 && $3 <= 152229388) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr6_151729388
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr10 |awk 'BEGIN { OFS = "\t"} {if($3 >= 121078300 && $3 <= 122078300) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr10_121578300
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr16 |awk 'BEGIN { OFS = "\t"} {if($3 >= 52065276 && $3 <= 53065276) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr16_52565276
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr18 |awk 'BEGIN { OFS = "\t"} {if($3 >= 31850613 && $3 <= 32850613) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr18_32350613
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_bd38_liftover_1pct_chr19 |awk 'BEGIN { OFS = "\t"} {if($3 >= 16783116 && $3 <= 17783116) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr19_17283116
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_ERpos_bd38_liftover_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($3 >= 216539053 && $3 <= 217539053) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr2_217039053
+python Add_pos.py /gpfs52/nobackup/sbcs/damon/BC_GWAS_Summary/Uniq_METAL_input_rep_EUR_ERpos_bd38_liftover_1pct_chr14 |awk 'BEGIN { OFS = "\t"} {if($3 >=  36182738 && $3 <=  37182738) print $1,$2}'|sort|uniq  |sed '1iMarkerName\tP-value' > EUR_rep_SNP_P_chr14_36682738
+
+
+module load GCC/5.4.0-2.26  OpenMPI/1.10.3 R/3.3.3 Python/2.7.12 PLINK/1.9b_5.2
+
+while read i pos start end lead
+do
+# estimate the LD with the reference SNP
+plink --bfile MEGA_RP_ctrl_nc_chr$i --maf 0.005 --chr $i --from-bp $start --to-bp $end --make-bed --out AFR_ref_chr"$i"_"$pos"
+plink --bfile AFR_ref_chr"$i"_"$pos" --r2 --ld-snp $lead --ld-window-r2 0.05 --out AFR_ref_chr"$i"_"$pos"
+awk '{print $6,$3" . "$7}' AFR_ref_chr"$i"_"$pos".ld |sed 1d | sed '1isnp1 snp2 dprime rsquare' > AFR_ref_chr"$i"_"$pos".ld.lz
+plink --bfile BioVU_HRC_bd38_chr$i --chr $i --from-bp $start --to-bp $end --make-bed --out EUR_ref_chr"$i"_"$pos"
+plink --bfile EUR_ref_chr"$i"_"$pos" --r2 --ld-snp $lead --ld-window-r2 0.05 --out EUR_ref_chr"$i"_"$pos"
+awk '{print $6,$3" . "$7}' EUR_ref_chr"$i"_"$pos".ld |sed 1d | sed '1isnp1 snp2 dprime rsquare' > EUR_ref_chr"$i"_"$pos".ld.lz
+
+# Draw the plot
+/gpfs52/nobackup/sbcs/damon/locusZoom/locuszoom/bin/locuszoom  --metal AFR_rep_SNP_P_chr"$i"_"$pos"  --build hg38 --refsnp "$i":"$pos" --chr $i --start $start --end $end --ld AFR_ref_chr"$i"_"$pos".ld.lz --prefix AFR_chr"$i"_"$pos" --plotonly title=$lead ldCuts=".2,.4,.6,.8,1"
+/gpfs52/nobackup/sbcs/damon/locusZoom/locuszoom/bin/locuszoom  --metal EUR_rep_SNP_P_chr"$i"_"$pos"  --build hg38 --refsnp "$i":"$pos" --chr $i --start $start --end $end --ld EUR_ref_chr"$i"_"$pos".ld.lz --prefix EUR_chr"$i"_"$pos" --plotonly title=$lead ldCuts=".2,.4,.6,.8,1"
+
+done < chr_pos_start_end_lead_AFR
+
+############ chr_pos_start_end_lead_AFR ############
+2       120501624       120001624       121001624       2:120501624:T:C
+4       105613442       105113442       106113442       4:105613442:C:T
+5       1279675 779675  1779675 5:1279675:C:T
+6       151729388       151229388       152229388       6:151729388:G:C
+10      121578300       121078300       122078300       10:121578300:A:G
+16      52565276        52065276        53065276        16:52565276:C:T
+18      32350613        31850613        32850613        18:32350613:T:C
+19      17283116        16783116        17783116        19:17283116:C:A
+2       217039053       216539053       217539053       2:217039053:G:A
+14      36682738        36182738        37182738        14:36682738:A:G
+####################################v#################

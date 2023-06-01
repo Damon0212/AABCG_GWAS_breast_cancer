@@ -1,0 +1,118 @@
+## (5) eQTL using Komen samples
+
+##(a) Extract variants within 10kb from the lead SNP, generate dosage and freq file uisng PLINK
+
+cd /gpfs52/nobackup/sbcs/damon/AABCGS/eQTL
+for i in {1.22}
+do
+zcat /gpfs52/nobackup/sbcs/pingj2/Komen/geno/Komen/TopMed/chr$i.info.gz |sed 1d  | awk '{if ($7>0.3) print $1}' > Komen_rsq03_chr$i
+done
+
+module load PLINK/2.00-alpha2
+while read i start end
+do
+plink2 --vcf /gpfs52/nobackup/sbcs/pingj2/Komen/geno/Komen/TopMed/chr$i.dose.vcf.gz   --double-id  --chr $i  --from-bp  $start --to-bp $end    --make-bed --out Komen_chr"$i"_"$start"_"$end"
+plink2 --bfile Komen_chr"$i"_"$start"_"$end"   --extract  Komen_rsq03_chr$i --make-bed --out Komen_rsq03_chr"$i"_"$start"_"$end"
+
+grep -w -f <(awk '{print $2}' Komen_rsq03_chr"$i"_"$start"_"$end".bim |sort|uniq |sed 's/chr//g') METAL_input_rep_AFR_bd38_1pct_chr$i |awk 'BEGIN { OFS = "\t"} {print "chr"$1,$5,$6,$7,$2,$4,$3,$8}' |sed '1iSNP\tA1\tA2\tfreq\tb\tse\tp\tN' > GWAS_info_chr"$i"_"$start"_"$end"
+
+plink2 --bfile Komen_rsq03_chr"$i"_"$start"_"$end" --extract  <(awk '{print $1}' GWAS_info_chr"$i"_"$start"_"$end" |sed 1d) --make-bed --out Komen_eqtl_chr"$i"_"$start"_"$end"
+plink2 --bfile Komen_eqtl_chr"$i"_"$start"_"$end" --recode A --out Komen_eqtl_chr"$i"_"$start"_"$end"
+plink2 --bfile Komen_eqtl_chr"$i"_"$start"_"$end" --freq --out Komen_eqtl_chr"$i"_"$start"_"$end"
+done <eqtl_loci
+
+##(b) Run eqtl
+
+module load GCC/5.4.0-2.26  OpenMPI/1.10.3 R/3.3.3
+
+# Komen_eQTL.R 
+library(methods)
+args <- commandArgs(trailingOnly=T)
+
+chr <- as.numeric(args[1])
+start <- as.numeric(args[2]) 
+end <- as.numeric(args[3]) 
+
+#model <- "TCGA"
+#chr <- 2
+#start <- 118813485
+#end <-118833485
+leadsnp <- paste0("chr",chr)
+start_gene <- start + 10000 - 500000
+end_gene <- end - 10000 + 500000
+
+load("/nobackup/sbcs/pingj2/Komen/exp/Komen.AFR.PEER_residuals.rda")
+gene <-as.data.frame(residuals)
+names(gene)<- substr(colnames(residuals),1,15)
+
+
+gencode_path <- "/gpfs52/nobackup/sbcs/damon/AA_TWAS/GencodeV22_brief"
+gencode <- read.table(gencode_path, header = T, stringsAsFactors = F)
+gencode$start<-gencode$left
+gencode[gencode$strand=="-" ,]$start <-gencode[gencode$strand=="-" ,]$right
+
+local_genes <- gencode[gencode$chr==leadsnp & gencode$start >= start_gene & gencode$start <= end_gene ,]
+
+#nearby_genes <- read.table("genes_nearby.txt",header=T,sep='\t')
+#local_genes <- nearby_genes[nearby_genes$posid == leadsnp,]
+gene_working <- as.data.frame(gene[,names(gene) %in% local_genes$geneid])
+names(gene_working) <- names(gene)[names(gene) %in% local_genes$geneid]
+rownames(gene_working) <- rownames(gene)
+
+gene_list <- local_genes[local_genes$geneid %in% names(gene_working) ,]
+gene_list$PathOfEsd <- rep(NA, nrow(gene_list))
+model<-"Komen"
+
+
+snps <- read.table(paste(model,"_eqtl_",leadsnp,"_",start,"_",end,".raw",sep=""),header=T)
+snps2<-snps[,-c(1:6)]
+rownames(snps2)<- substr(snps$IID,10,16)
+snps3<-snps2[rownames(gene_working),]
+
+freq <- read.table(paste(model,"_eqtl_",leadsnp,"_",start,"_",end,".afreq",sep=""),header=F)
+names(freq) <- c("chr","ID","REF","ALT","ALT_FREQS","OBS_CT")
+
+for (i in 1:nrow(gene_list))
+{
+	gene_at_work <- gene_working[,as.character(gene_list$geneid[i])]
+	gene_at_work_results <-data.frame(Chr=NULL,SNP=NULL,Bp=NULL,A1=NULL, A2=NULL, Freq=NULL,Beta=NULL,se=NULL,p=NULL)
+
+	for (k in 1:ncol(snps3))
+	{
+		SNP <-unlist(strsplit(as.character(freq$ID[k]),":"))
+		if(nrow(coef(summary(lm(gene_at_work~snps3[,k])))) <2) next
+        	results<-coef(summary(lm(gene_at_work~snps3[,k])))[2,]
+        	work<-data.frame(Chr=freq$chr[k],SNP=freq$ID[k],Bp=SNP[2],A1=freq$REF[k], A2=freq$ALT[k], Freq=1-freq$ALT_FREQS[k],Beta=results[1],se=results[2],p=results[4])
+		rownames(work)<-NULL
+        	gene_at_work_results<-rbind(gene_at_work_results,work)
+	}
+
+	write.table(gene_at_work_results , paste(model,"_", as.character(gene_list$geneid[i]), ".esd",sep=""),row.names=F,quote=F,sep="\t")
+	gene_list$PathOfEsd[i] <- paste("/gpfs52/nobackup/sbcs/damon/AABCGS/eQTL/",model,"_", as.character(gene_list$geneid[i]), ".esd",sep="")
+}
+
+gene_list$Chr <- rep(chr,nrow(gene_list))
+gene_list$ProbeID <- gene_list$geneid
+gene_list$GeneticDistance <- rep(0,nrow(gene_list))
+gene_list$ProbeBp <- gene_list$start
+gene_list$Gene <- gene_list$genename
+gene_list$Orientation <- gene_list$strand
+
+flist <- gene_list[,c("Chr","ProbeID", "GeneticDistance", "ProbeBp", "Gene", "Orientation", "PathOfEsd")]
+write.table(flist, paste(model,"_eqtl_",leadsnp,"_",start,"_",end, ".flist",sep=""),row.names=F,quote=F,sep="\t")
+
+
+## (c) Coloalization analysis
+
+## Prepare eqtl results in format
+
+while read chr start end
+do
+/gpfs52/nobackup/sbcs/damon/smr_Linux --eqtl-flist Komen_eqtl_chr"$chr"_"$start"_"$end".flist --make-besd --out Komen_eqtl_chr"$chr"_"$start"_"$end"
+done < eqtl_loci
+
+while read model i start end outcome
+do
+/gpfs52/nobackup/sbcs/damon/smr_Linux --bfile /gpfs52/nobackup/sbcs/damon/AABCGS/RP_MEGA_rsq03/MEGA_RP_rsq03_chr$i  --gwas-summary "$outcome"_chr"$i"_"$start"_"$end" --beqtl-summary "$model"_eqtl_chr"$i"_"$start"_"$end" --peqtl-smr 0.05  --peqtl-heidi 0.05 --out "$model"_eqtl_chr"$i"_"$start"_"$end"_"$outcome" --thread-num 10 
+sed 1d "$model"_eqtl_chr"$i"_"$start"_"$end"_"$outcome".smr |awk 'BEGIN { OFS = ","} {if($19<0.05) print $0}' >> SMR_results
+done < SMR_list

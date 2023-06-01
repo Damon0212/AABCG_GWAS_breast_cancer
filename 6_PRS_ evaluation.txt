@@ -1,0 +1,67 @@
+## (6) PRS construction and evaluation
+# Extract the selected variants for PRS_AFR and PRS_EUR from the validation samples from SCCS and BWHS
+module load PLINK/2.00-alpha2
+plink2 --bfile Valid_SCCS_BWHS_AFR_PRS --export A --export-allele risk_allele_novalid2 --out Valid_SCCS_BWHS
+sed 's/NA//g' Valid_SCCS_BWHS.raw > Valid_SCCS_BWHS.raw
+
+plink2 --bfile Valid_SCCS_BWHS_313 --extract EUR_PRS_SNPs --export A --export-allele risk_allele_313 --out Valid_SCCS_BWHS_313
+sed 's/NA//g' Valid_SCCS_BWHS_313.raw > Valid_SCCS_BWHS_313_na.raw
+
+# Calculate the PRS and evaluate the performance
+R
+library(dplyr)
+library(rms)
+PRS_valid<-read.table("PRS_RAW.raw",head=T)
+PRS_valid$PRS95_std <- ( PRS_valid$PRS95 - mean(PRS_valid$PRS95[PRS_valid$BC==0]) )/sd(PRS_valid$PRS95[PRS_valid$BC==0])
+PRS_valid$PRS_index_std <- ( PRS_valid$PRS_index - mean(PRS_valid$PRS_index[PRS_valid$BC==0]) )/sd(PRS_valid$PRS_index[PRS_valid$BC==0])
+PRS_valid$PRS_313_eur_std <- ( PRS_valid$PRS_313_eur - mean(PRS_valid$PRS_313_eur[PRS_valid$BC==0]) )/sd(PRS_valid$PRS_313_eur[PRS_valid$BC==0])
+
+# Distribution plots of PRS 
+bcplot<-ggplot(PRS_valid,aes(x=PRS95_std,linetype=as.factor(BC))) +  
+  geom_density() + 
+  theme(panel.background = element_blank(),axis.line  = element_line(),legend.position=c(0.2,0.8)) +
+  xlab('PRS_AFR for breast cancer')+
+  ylab("Density")+
+  scale_linetype_discrete(name=NULL,labels=c("Controls","Cases"))
+ggsave("Distribution_PRS_AFR_94.tiff", plot = bcplot, width = 8, height = 6, units = "in", dpi = 300)
+
+bcplot2<-ggplot(PRS_valid,aes(x=PRS_313_eur_std,linetype=as.factor(BC))) +  
+  geom_density() + 
+  theme(panel.background = element_blank(),axis.line  = element_line(),legend.position=c(0.2,0.8)) +
+  xlab('PRS_EUR for breast cancer')+
+  ylab("Density")+
+  scale_linetype_discrete(name=NULL,labels=c("Controls","Cases"))
+ggsave("Distribution_PRS_EUR.tiff", plot = bcplot2, width = 8, height = 6, units = "in", dpi = 300)
+
+cutps_94<-quantile(PRS_valid$PRS95_std[PRS_valid$BC==0], p=c(0.2,0.4,0.6,0.8,0.9,0.95))
+PRS_valid$PRSc_94<-cut(PRS_valid$PRS95_std,breaks=c(min(PRS_valid$PRS95_std),cutps_94,max(PRS_valid$PRS95_std)),include.lowest=T)
+describe(PRS_valid$PRSc_94)
+aggregate(as.factor(BC) ~ PRSc_94, data = PRS_valid, summary) 
+
+cutps_EUR<-quantile(PRS_valid$PRS_313_eur[PRS_valid$BC==0], p=c(0.2,0.4,0.6,0.8,0.9,0.95))
+PRS_valid$PRSc_EUR<-cut(PRS_valid$PRS_313_eur,breaks=c(min(PRS_valid$PRS_313_eur),cutps_EUR,max(PRS_valid$PRS_313_eur)),include.lowest=T)
+aggregate(as.factor(BC) ~ PRSc_EUR, data = PRS_valid, summary) 
+
+## Evaluation of performance
+ggm_afr_sd<-glm(BC~PRS95_std + Age_GWAS + as.factor(YOB_cat) + as.factor(Study_Array) + PC1 + PC2 + PC3 + PC4 + PC5 ,family=binomial,data=PRS_valid)
+summary(ggm_afr_sd)
+exp(confint(ggm_afr_sd))
+
+ggm<-glm(BC~relevel(PRSc_94,3) + Age_GWAS + as.factor(YOB_cat) + as.factor(Study_Array) + PC1 + PC2 + PC3 + PC4 + PC5 ,family=binomial,data=PRS_valid)
+summary(ggm)
+exp(confint(ggm))
+
+ggm_eur<-glm(BC ~ relevel(PRSc_EUR,3) + Age_GWAS + as.factor(YOB_cat) + as.factor(Study_Array) + PC1 + PC2 + PC3 + PC4 + PC5 ,family=binomial,data=PRS_valid)
+summary(ggm_eur)
+exp(confint(ggm_eur))
+
+ggm_eur_sd<-glm(BC~ PRS_313_eur_std + Age_GWAS + as.factor(YOB_cat) + as.factor(Study_Array) + PC1 + PC2 + PC3 + PC4 + PC5 ,family=binomial,data=PRS_valid)
+summary(ggm_eur_sd)
+exp(confint(ggm_eur_sd))
+
+## Estimate AUC using stata command comproc
+import delimited Valid_PRS_std.csv, delimiter(comma) varnames(1) case(preserve) clear 
+comproc BC PRS95_std ,auc adjcov (PC1 PC2 PC3 PC4 PC5 Age_GWAS Study_Array1 Study_Array2 Study_Array3 Study_Array4 YOB1 YOB2 YOB3 YOB4 YOB6 YOB7 YOB8) adjmodel(linear)
+comproc BC PRS_index_std ,auc adjcov (PC1 PC2 PC3 PC4 PC5 Age_GWAS Study_Array1 Study_Array2 Study_Array3 Study_Array4 YOB1 YOB2 YOB3 YOB4 YOB6 YOB7 YOB8) adjmodel(linear)
+comproc BC PRS_313_eur_std ,auc adjcov (PC1 PC2 PC3 PC4 PC5 Age_GWAS Study_Array1 Study_Array2 Study_Array3 Study_Array4 YOB1 YOB2 YOB3 YOB4 YOB6 YOB7 YOB8) adjmodel(linear)
+

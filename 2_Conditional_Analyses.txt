@@ -1,0 +1,121 @@
+#### (2) Conditional Analyses using GCTA-COJO
+
+
+## AFR GWAS summary: 
+METAL_input_rep_AFR_bd38_1pct_chr$i
+METAL_input_rep_AFR_ERpos_bd38_1pct_chr$i
+METAL_input_rep_AFR_ERneg_bd38_1pct_chr$i
+
+## EUR GWAS summary (obtained from Michailidou et. al. 2017 and Zhang et. al. 2020; recoded into bd38 using liftover) :
+METAL_input_rep_EUR_bd38_liftover_1pct_chr$i
+METAL_input_rep_EUR_ERpos_bd38_liftover_1pct_chr$i
+METAL_input_rep_EUR_ERneg_bd38_liftover_1pct_chr$i
+
+## AFR LD reference panel: 2,730 controls of African ancestry from Roswell Park Comprehensive Cancer Center (PLINK format):
+MEGA_RP_ctrl_nc_chr$i
+
+## EUR LD reference panel: 4,441 BioVU participants of European ancestry without diagnosis of breast cancer (PLINK format):
+BioVU_HRC_bd38_chr$i
+
+##### Add_pos.py ##########
+import sys
+for line in open(sys.argv[1]):
+    if line.startswith("SNP"):continue
+    l = line.strip().split("\t")
+    chr,pos,a1,a2=l[0].split(":")
+    print "\t".join([line.strip(),pos])
+########################################
+
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($9 >= 120001624 && $9 <= 121001624) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr2_120501624
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr2_120501624 > AFR_COJO_rep_chr2_120501624_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr2 --chr 2 --extract AFR_COJO_rep_chr2_120501624_variants --cojo-file AFR_COJO_rep_chr2_120501624 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr2_120501624
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr4 |awk 'BEGIN { OFS = "\t"} {if($9 >= 105113442 && $9 <= 106113442) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr4_105613442
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr4_105613442 > AFR_COJO_rep_chr4_105613442_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr4 --chr 4 --extract AFR_COJO_rep_chr4_105613442_variants --cojo-file AFR_COJO_rep_chr4_105613442 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr4_105613442
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr5 |awk 'BEGIN { OFS = "\t"} {if($9 >= 779675 && $9 <= 1779675) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr5_1279675
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr5_1279675 > AFR_COJO_rep_chr5_1279675_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr5 --chr 5 --extract AFR_COJO_rep_chr5_1279675 --cojo-file AFR_COJO_rep_chr5_1279675 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr5_1279675
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr6 |awk 'BEGIN { OFS = "\t"} {if($9 >= 151229388 && $9 <= 152229388) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr6_151729388
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr6_151729388 > AFR_COJO_rep_chr6_151729388_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr6 --chr 6 --extract AFR_COJO_rep_chr6_151729388_variants --cojo-file AFR_COJO_rep_chr6_151729388 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr6_151729388
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr10 |awk 'BEGIN { OFS = "\t"} {if($9 >= 121078300 && $9 <= 122078300) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr10_121578300
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr10_121578300 > AFR_COJO_rep_chr10_121578300_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr10 --chr 10 --extract AFR_COJO_rep_chr10_121578300_variants --cojo-file AFR_COJO_rep_chr10_121578300 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr10_121578300
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr16 |awk 'BEGIN { OFS = "\t"} {if($9 >= 52065276 && $9 <= 53065276) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr16_52565276
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr16_52565276 > AFR_COJO_rep_chr16_52565276_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr16 --chr 16 --extract AFR_COJO_rep_chr16_52565276_variants --cojo-file AFR_COJO_rep_chr16_52565276 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr16_52565276
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr18 |awk 'BEGIN { OFS = "\t"} {if($9 >= 31850613 && $9 <= 32850613) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr18_32350613
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr18_32350613 > AFR_COJO_rep_chr18_32350613_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr18 --chr 18 --extract AFR_COJO_rep_chr18_32350613_variants --cojo-file AFR_COJO_rep_chr18_32350613 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr18_32350613
+
+python Add_pos.py METAL_input_rep_AFR_bd38_1pct_chr19 |awk 'BEGIN { OFS = "\t"} {if($9 >= 16783116 && $9 <= 17783116) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_chr19_17283116
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_chr19_17283116 > AFR_COJO_rep_chr19_17283116_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr19 --chr 19 --extract AFR_COJO_rep_chr19_17283116_variants --cojo-file AFR_COJO_rep_chr19_17283116 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_chr19_17283116
+
+python Add_pos.py METAL_input_rep_AFR_ERpos_bd38_liftover_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($9 >= 216539053 && $9 <= 217539053) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_ERpos_chr2_217039053
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_ERpos_chr2_217039053 > AFR_COJO_rep_ERpos_chr2_217039053_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr2 --chr 2 --extract AFR_COJO_rep_ERpos_chr2_217039053_variants --cojo-file AFR_COJO_rep_ERpos_chr2_217039053 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_ERpos_chr2_217039053
+
+python Add_pos.py METAL_input_rep_AFR_ERpos_bd38_liftover_1pct_chr14 |awk 'BEGIN { OFS = "\t"} {if($9 >= 36182738 && $9 <= 37182738) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_ERpos_chr14_36682738
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_ERpos_chr14_36682738 > AFR_COJO_rep_ERpos_chr14_36682738_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr14 --chr 14 --extract AFR_COJO_rep_ERpos_chr14_36682738_variants --cojo-file AFR_COJO_rep_ERpos_chr14_36682738 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_ERpos_chr14_36682738
+
+python Add_pos.py METAL_input_rep_AFR_ERpos_bd38_liftover_1pct_chr18 |awk 'BEGIN { OFS = "\t"} {if($9 >= 23558545 && $9 <= 24558545) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_ERpos_chr18_24058545
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_ERpos_chr18_24058545 > AFR_COJO_rep_ERpos_chr18_24058545_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr18 --chr 18 --extract AFR_COJO_rep_ERpos_chr18_24058545_variants --cojo-file AFR_COJO_rep_ERpos_chr18_24058545 --cojo-slct --cojo-p 1e-4  --out AFR_COJO_ERpos_chr18_24058545
+
+python Add_pos.py METAL_input_rep_AFR_ERneg_bd38_liftover_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($9 >= 118323485 && $9 <= 119323485) print $1,$5,$6,$7,$2,$4,$3,$8}' > AFR_COJO_rep_ERneg_chr2_118823485
+awk 'BEGIN { OFS = "\t"} {print $1}' AFR_COJO_rep_ERneg_chr2_118823485 > AFR_COJO_rep_ERneg_chr2_118823485_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile MEGA_RP_ctrl_nc_chr2 --chr 2 --extract AFR_COJO_rep_ERneg_chr2_118823485_variants --cojo-file AFR_COJO_rep_ERneg_chr2_118823485  --cojo-slct --cojo-p 1e-4  --out AFR_COJO_ERneg_chr2_118823485
+
+
+
+
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($9 >= 120001624 && $9 <= 121001624) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr2_120501624
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr2_120501624 > EUR_COJO_rep_chr2_120501624_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr2 --chr 2 --extract EUR_COJO_rep_chr2_120501624_variants --cojo-file EUR_COJO_rep_chr2_120501624 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr2_120501624
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr4 |awk 'BEGIN { OFS = "\t"} {if($9 >= 105113442 && $9 <= 106113442) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr4_105613442
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr4_105613442 > EUR_COJO_rep_chr4_105613442_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr4 --chr 4 --extract EUR_COJO_rep_chr4_105613442_variants --cojo-file EUR_COJO_rep_chr4_105613442 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr4_105613442
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr5 |awk 'BEGIN { OFS = "\t"} {if($9 >= 779675 && $9 <= 1779675) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr5_1279675
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr5_1279675 > EUR_COJO_rep_chr5_1279675_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr5 --chr 5 --extract EUR_COJO_rep_chr5_1279675 --cojo-file EUR_COJO_rep_chr5_1279675 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr5_1279675
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr6 |awk 'BEGIN { OFS = "\t"} {if($9 >= 151229388 && $9 <= 152229388) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr6_151729388
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr6_151729388 > EUR_COJO_rep_chr6_151729388_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr6 --chr 6 --extract EUR_COJO_rep_chr6_151729388_variants --cojo-file EUR_COJO_rep_chr6_151729388 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr6_151729388
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr10 |awk 'BEGIN { OFS = "\t"} {if($9 >= 121078300 && $9 <= 122078300) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr10_121578300
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr10_121578300 > EUR_COJO_rep_chr10_121578300_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr10 --chr 10 --extract EUR_COJO_rep_chr10_121578300_variants --cojo-file EUR_COJO_rep_chr10_121578300 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr10_121578300
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr16 |awk 'BEGIN { OFS = "\t"} {if($9 >= 52065276 && $9 <= 53065276) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr16_52565276
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr16_52565276 > EUR_COJO_rep_chr16_52565276_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr16 --chr 16 --extract EUR_COJO_rep_chr16_52565276_variants --cojo-file EUR_COJO_rep_chr16_52565276 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr16_52565276
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr18 |awk 'BEGIN { OFS = "\t"} {if($9 >= 31850613 && $9 <= 32850613) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr18_32350613
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr18_32350613 > EUR_COJO_rep_chr18_32350613_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr18 --chr 18 --extract EUR_COJO_rep_chr18_32350613_variants --cojo-file EUR_COJO_rep_chr18_32350613 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr18_32350613
+
+python Add_pos.py METAL_input_rep_EUR_bd38_liftover_1pct_chr19 |awk 'BEGIN { OFS = "\t"} {if($9 >= 16783116 && $9 <= 17783116) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_chr19_17283116
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_chr19_17283116 > EUR_COJO_rep_chr19_17283116_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr19 --chr 19 --extract EUR_COJO_rep_chr19_17283116_variants --cojo-file EUR_COJO_rep_chr19_17283116 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_chr19_17283116
+
+python Add_pos.py METAL_input_rep_EUR_ERpos_bd38_liftover_1pct_chr2 |awk 'BEGIN { OFS = "\t"} {if($9 >= 216539053 && $9 <= 217539053) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_ERpos_chr2_217039053
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_ERpos_chr2_217039053 > EUR_COJO_rep_ERpos_chr2_217039053_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr2 --chr 2 --extract EUR_COJO_rep_ERpos_chr2_217039053_variants --cojo-file EUR_COJO_rep_ERpos_chr2_217039053 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_ERpos_chr2_217039053
+
+python Add_pos.py METAL_input_rep_EUR_ERpos_bd38_liftover_1pct_chr14 |awk 'BEGIN { OFS = "\t"} {if($9 >= 36182738 && $9 <= 37182738) print $1,$5,$6,$7,$2,$4,$3,$8}' > EUR_COJO_rep_ERpos_chr14_36682738
+awk 'BEGIN { OFS = "\t"} {print $1}' EUR_COJO_rep_ERpos_chr14_36682738 > EUR_COJO_rep_ERpos_chr14_36682738_variants
+/gpfs52/nobackup/sbcs/damon/gcta/gcta-1.94.1-linux-kernel-3-x86_64/gcta-1.94.1 --bfile BioVU_HRC_bd38_chr14 --chr 14 --extract EUR_COJO_rep_ERpos_chr14_36682738_variants --cojo-file EUR_COJO_rep_ERpos_chr14_36682738 --cojo-slct --cojo-p 1e-4  --out EUR_COJO_ERpos_chr14_36682738
+
